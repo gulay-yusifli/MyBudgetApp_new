@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FaTimes, FaSave } from 'react-icons/fa';
 
 const emptyForm = {
-  type: 'Expense',
+  type: 1,
   amount: '',
   description: '',
   date: new Date().toISOString().split('T')[0],
