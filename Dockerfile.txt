@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["MyBudgetApp.Web/MyBudgetApp.Web.csproj", "MyBudgetApp.Web/"]
+COPY ["MyBudgetApp.Core/MyBudgetApp.Core.csproj", "MyBudgetApp.Core/"]
+RUN dotnet restore "MyBudgetApp.Web/MyBudgetApp.Web.csproj"
+COPY . .
+WORKDIR "/src/MyBudgetApp.Web"
+RUN dotnet build "MyBudgetApp.Web.csproj" -c Release -o /app/build
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+COPY --from=build /app/build .
+EXPOSE 10000
+ENV ASPNETCORE_URLS=http://+:10000
+ENTRYPOINT ["dotnet", "MyBudgetApp.Web.dll"]
