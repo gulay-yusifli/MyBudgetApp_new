@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetApp.Core.Interfaces;
 
@@ -5,6 +6,7 @@ namespace MyBudgetApp.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardService;

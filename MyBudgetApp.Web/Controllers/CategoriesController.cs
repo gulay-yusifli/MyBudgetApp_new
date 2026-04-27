@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetApp.Core.Interfaces;
 using MyBudgetApp.Core.Models;
@@ -6,6 +7,7 @@ namespace MyBudgetApp.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class CategoriesController : ControllerBase
 {
     private readonly ICategoryService _categoryService;

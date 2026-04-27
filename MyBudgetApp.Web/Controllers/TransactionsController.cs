@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyBudgetApp.Core.DTOs;
 using MyBudgetApp.Core.Interfaces;
@@ -7,6 +8,7 @@ namespace MyBudgetApp.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class TransactionsController : ControllerBase
 {
     private readonly ITransactionService _transactionService;

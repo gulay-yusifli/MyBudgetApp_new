@@ -1,9 +1,10 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MyBudgetApp.Core.Models;
 
 namespace MyBudgetApp.Data;
 
-public class BudgetDbContext : DbContext
+public class BudgetDbContext : IdentityDbContext<ApplicationUser>
 {
     public BudgetDbContext(DbContextOptions<BudgetDbContext> options) : base(options)
     {
@@ -35,6 +36,21 @@ public class BudgetDbContext : DbContext
                   .WithMany(c => c.Transactions)
                   .HasForeignKey(t => t.CategoryId)
                   .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(t => t.User)
+                  .WithMany(u => u.Transactions)
+                  .HasForeignKey(t => t.UserId)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .IsRequired(false);
+        });
+
+        modelBuilder.Entity<Category>(entity =>
+        {
+            entity.HasOne(c => c.User)
+                  .WithMany(u => u.Categories)
+                  .HasForeignKey(c => c.UserId)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .IsRequired(false);
         });
 
         // Seed default categories

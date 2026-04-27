@@ -23,4 +23,7 @@ public class Transaction
 
     [StringLength(500, ErrorMessage = "Description cannot exceed 500 characters.")]
     public string? Description { get; set; }
+
+    public string? UserId { get; set; }
+    public ApplicationUser? User { get; set; }
 }

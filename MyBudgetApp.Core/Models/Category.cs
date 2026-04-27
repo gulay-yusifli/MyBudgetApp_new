@@ -14,4 +14,7 @@ public class Category
     public string Color { get; set; } = "#6c757d";
 
     public ICollection<Transaction> Transactions { get; set; } = new List<Transaction>();
+
+    public string? UserId { get; set; }
+    public ApplicationUser? User { get; set; }
 }
