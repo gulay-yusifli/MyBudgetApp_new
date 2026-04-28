@@ -1,10 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import Login from './pages/login';
+import Login from './pages/Login';
 import Register from './pages/Register';
-import Dashboard from './pages/dashboard';
-import Transactions from './pages/transactions';
-import Categories from './pages/categories';
+import Dashboard from './components/Dashboard';
+import Transactions from './components/Transactions';
+import Categories from './components/Categories';
+import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
     const token = localStorage.getItem('authToken');
@@ -12,17 +12,6 @@ function ProtectedRoute({ children }) {
 }
 
 export default function App() {
-    const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('authToken'));
-
-    useEffect(() => {
-        const handleStorageChange = () => {
-            setIsAuthenticated(!!localStorage.getItem('authToken'));
-        };
-
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, []);
-
     return (
         <BrowserRouter>
             <Routes>
@@ -32,7 +21,9 @@ export default function App() {
                     path="/dashboard"
                     element={
                         <ProtectedRoute>
-                            <Dashboard />
+                            <Layout>
+                                <Dashboard />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -40,7 +31,9 @@ export default function App() {
                     path="/transactions"
                     element={
                         <ProtectedRoute>
-                            <Transactions />
+                            <Layout>
+                                <Transactions />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />
@@ -48,7 +41,9 @@ export default function App() {
                     path="/categories"
                     element={
                         <ProtectedRoute>
-                            <Categories />
+                            <Layout>
+                                <Categories />
+                            </Layout>
                         </ProtectedRoute>
                     }
                 />

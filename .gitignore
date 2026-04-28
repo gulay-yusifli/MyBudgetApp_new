@@ -55,5 +55,6 @@ desktop.ini
 
 # Environment / Secrets
 .env
+!MyBudgetApp.Client/.env
 *.pfx
 appsettings.Production.json

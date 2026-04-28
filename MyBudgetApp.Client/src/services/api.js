@@ -1,10 +1,20 @@
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5162/api';
 
 async function request(path, options = {}) {
+  const token = localStorage.getItem('authToken');
+  const authHeader = token ? { 'Authorization': `Bearer ${token}` } : {};
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...options.headers },
+    headers: { 'Content-Type': 'application/json', ...authHeader, ...options.headers },
     ...options,
   });
+
+  if (response.status === 401) {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+    return;
+  }
 
   if (!response.ok) {
     const text = await response.text();

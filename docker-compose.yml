@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "MyBudgetApp_Str0ng!"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqldata:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P MyBudgetApp_Str0ng! -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5162:10000"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=db;Database=MyBudgetApp;User Id=sa;Password=MyBudgetApp_Str0ng!;TrustServerCertificate=true;"
+      Jwt__SecretKey: "my-super-secret-key-minimum-32-characters-long!"
+      Jwt__Issuer: "MyBudgetApp"
+      Jwt__Audience: "MyBudgetAppUsers"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./MyBudgetApp.Client:/app
+    ports:
+      - "5173:5173"
+    environment:
+      # VITE_API_URL is used by the Vite dev-server proxy (server-side resolution).
+      # The browser accesses the API via the published port (localhost:5162),
+      # but the Vite proxy inside the container must use the Docker service name.
+      VITE_API_URL: http://api:10000/api
+    command: sh -c "npm install && npm run dev -- --host"
+    depends_on:
+      - api
+
+volumes:
+  sqldata:
