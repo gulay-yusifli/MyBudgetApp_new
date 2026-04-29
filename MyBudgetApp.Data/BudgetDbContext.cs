@@ -12,6 +12,7 @@ public class BudgetDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<Transaction> Transactions { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
+    public DbSet<SavingsGoal> SavingsGoals { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +23,21 @@ public class BudgetDbContext : IdentityDbContext<ApplicationUser>
             entity.HasKey(c => c.Id);
             entity.Property(c => c.Name).IsRequired().HasMaxLength(100);
             entity.Property(c => c.Color).HasMaxLength(7).HasDefaultValue("#6c757d");
+        });
+
+        modelBuilder.Entity<SavingsGoal>(entity =>
+        {
+            entity.HasKey(g => g.Id);
+            entity.Property(g => g.GoalName).IsRequired().HasMaxLength(200);
+            entity.Property(g => g.TargetAmount).HasPrecision(18, 2).IsRequired();
+            entity.Property(g => g.CurrentAmount).HasPrecision(18, 2).HasDefaultValue(0m);
+            entity.Property(g => g.MonthlyBudget).HasPrecision(18, 2).IsRequired();
+
+            entity.HasOne(g => g.User)
+                  .WithMany(u => u.SavingsGoals)
+                  .HasForeignKey(g => g.UserId)
+                  .OnDelete(DeleteBehavior.Cascade)
+                  .IsRequired(false);
         });
 
         modelBuilder.Entity<Transaction>(entity =>

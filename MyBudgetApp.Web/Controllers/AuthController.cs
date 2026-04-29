@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using MyBudgetApp.Core.DTOs;
+using MyBudgetApp.Core.Interfaces;
 using MyBudgetApp.Core.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -17,15 +18,18 @@ public class AuthController : ControllerBase
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IConfiguration _configuration;
+    private readonly IEmailService _emailService;
 
     public AuthController(
         UserManager<ApplicationUser> userManager,
         SignInManager<ApplicationUser> signInManager,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        IEmailService emailService)
     {
         _userManager = userManager;
         _signInManager = signInManager;
         _configuration = configuration;
+        _emailService = emailService;
     }
 
     [HttpPost("register")]
@@ -52,6 +56,14 @@ public class AuthController : ControllerBase
         }
 
         var token = GenerateJwtToken(user);
+
+        // Send welcome email (fire-and-forget)
+        _ = Task.Run(async () =>
+        {
+            try { await _emailService.SendRegistrationEmailAsync(user.Email!, user.FullName); }
+            catch { /* Swallow email errors */ }
+        });
+
         return Ok(new AuthResponse
         {
             Token = token.Token,
