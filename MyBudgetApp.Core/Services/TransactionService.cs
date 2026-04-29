@@ -58,6 +58,25 @@ public class TransactionService : ITransactionService
     {
         ArgumentNullException.ThrowIfNull(filter);
 
+        // Apply date range preset (overrides explicit StartDate/EndDate)
+        var today = DateTime.Today;
+        var startDate = filter.StartDate;
+        var endDate = filter.EndDate;
+
+        if (!string.IsNullOrWhiteSpace(filter.DateRangePreset))
+        {
+            if (filter.DateRangePreset.Equals("LastMonth", StringComparison.OrdinalIgnoreCase))
+            {
+                startDate = today.AddMonths(-1);
+                endDate = today;
+            }
+            else if (filter.DateRangePreset.Equals("Last6Months", StringComparison.OrdinalIgnoreCase))
+            {
+                startDate = today.AddMonths(-6);
+                endDate = today;
+            }
+        }
+
         TransactionType? type = null;
         if (!string.IsNullOrWhiteSpace(filter.Type) &&
             Enum.TryParse<TransactionType>(filter.Type, true, out var parsedType))
@@ -65,7 +84,7 @@ public class TransactionService : ITransactionService
             type = parsedType;
         }
 
-        return _repository.GetFilteredAsync(filter.StartDate, filter.EndDate, filter.CategoryId, type);
+        return _repository.GetFilteredAsync(startDate, endDate, filter.CategoryId, type);
     }
 
     public async Task<decimal> GetTotalIncomeAsync(DateTime? startDate = null, DateTime? endDate = null)

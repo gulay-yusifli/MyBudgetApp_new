@@ -25,6 +25,9 @@ public class CategoryService : ICategoryService
         if (string.IsNullOrWhiteSpace(category.Name))
             throw new ArgumentException("Category name cannot be empty.", nameof(category));
 
+        if (await _repository.IsDuplicateNameAsync(category.Name, category.UserId))
+            throw new InvalidOperationException($"A category named '{category.Name}' already exists.");
+
         return await _repository.AddAsync(category);
     }
 
@@ -37,6 +40,9 @@ public class CategoryService : ICategoryService
 
         if (!await _repository.ExistsAsync(category.Id))
             throw new KeyNotFoundException($"Category with ID {category.Id} not found.");
+
+        if (await _repository.IsDuplicateNameAsync(category.Name, category.UserId, excludeId: category.Id))
+            throw new InvalidOperationException($"A category named '{category.Name}' already exists.");
 
         return await _repository.UpdateAsync(category);
     }

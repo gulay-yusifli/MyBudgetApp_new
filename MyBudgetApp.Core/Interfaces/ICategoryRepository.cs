@@ -11,4 +11,5 @@ public interface ICategoryRepository
     Task DeleteAsync(int id);
     Task<bool> ExistsAsync(int id);
     Task<bool> HasTransactionsAsync(int id);
+    Task<bool> IsDuplicateNameAsync(string name, string? userId, int? excludeId = null);
 }

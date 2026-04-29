@@ -48,4 +48,15 @@ public class CategoryRepository : ICategoryRepository
 
     public async Task<bool> HasTransactionsAsync(int id) =>
         await _context.Transactions.AnyAsync(t => t.CategoryId == id);
+
+    public async Task<bool> IsDuplicateNameAsync(string name, string? userId, int? excludeId = null)
+    {
+        var query = _context.Categories
+            .Where(c => c.UserId == userId && c.Name.ToLower() == name.ToLower());
+
+        if (excludeId.HasValue)
+            query = query.Where(c => c.Id != excludeId.Value);
+
+        return await query.AnyAsync();
+    }
 }
