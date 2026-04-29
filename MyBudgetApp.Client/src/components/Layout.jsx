@@ -1,10 +1,11 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { FaTachometerAlt, FaListAlt, FaTags, FaSignOutAlt, FaWallet } from 'react-icons/fa';
+import { FaTachometerAlt, FaListAlt, FaTags, FaSignOutAlt, FaWallet, FaPiggyBank } from 'react-icons/fa';
 
 const navItems = [
   { to: '/dashboard', icon: <FaTachometerAlt />, label: 'Dashboard' },
   { to: '/transactions', icon: <FaListAlt />, label: 'Transactions' },
   { to: '/categories', icon: <FaTags />, label: 'Categories' },
+  { to: '/savings-goals', icon: <FaPiggyBank />, label: 'Savings Goals' },
 ];
 
 export default function Layout({ children }) {

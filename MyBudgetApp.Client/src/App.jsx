@@ -4,6 +4,7 @@ import Register from './pages/Register';
 import Dashboard from './components/Dashboard';
 import Transactions from './components/Transactions';
 import Categories from './components/Categories';
+import SavingsGoals from './components/SavingsGoals';
 import Layout from './components/Layout';
 
 function ProtectedRoute({ children }) {
@@ -43,6 +44,16 @@ export default function App() {
                         <ProtectedRoute>
                             <Layout>
                                 <Categories />
+                            </Layout>
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/savings-goals"
+                    element={
+                        <ProtectedRoute>
+                            <Layout>
+                                <SavingsGoals />
                             </Layout>
                         </ProtectedRoute>
                     }
